@@ -1,0 +1,2 @@
+module contracts::scratch;
+
