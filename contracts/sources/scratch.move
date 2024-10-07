@@ -104,6 +104,12 @@ public fun buy_ticket(
 ): ScratchTicket {
     assert!(house.price == payment.value(), EIncorrectPayment);
     house.balance.join(payment.into_balance());
+    let player = ctx.sender();
+    if(house.players.contains(player)) {
+        *house.players.borrow_mut(player) = *house.players.borrow(player) + 1;
+    } else {
+        house.players.add(player, 1);
+    };
     let mut generator = random.new_generator(ctx);
     let mut row1: u8 = 0;
     let mut row2: vector<u8> = vector[];
@@ -138,7 +144,7 @@ public fun buy_ticket(
     };
     event::emit(TicketBought{
         ticket_id,
-        player: ctx.sender(),
+        player,
         row1,
         row2,
         row3,
